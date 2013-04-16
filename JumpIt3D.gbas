@@ -32,9 +32,10 @@ GLOBAL GameState% = GAMESTATE_GAME
 
 GLOBAL CamX, CamY, CamZ, CamToX, CamToY, CamToZ
 
-CamX = 15
-CamY = 15
-CamZ = 15
+CamX = -8
+CamY = 28
+CamZ = 8
+
 
 GLOBAL CurrentMap AS TMap
 
@@ -90,6 +91,7 @@ SUB Render:
 			X_CAMERA CamX, CamY, CamZ, CamToX, CamToY, CamToZ
 			X_AMBIENT_LT 0, RGB(220,220,220)
 			X_MOVEMENT 0,0,0
+			X_DRAWAXES 0,0,0
 			
 			// 3d stuff
 			CurrentMap.Render()
