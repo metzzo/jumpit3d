@@ -1,0 +1,41 @@
+// --------------------------------- //
+// Project: JumpIt3D
+// Start: Tuesday, April 16, 2013
+// IDE Version: 10.283
+
+
+TYPE TMap
+	ObjID%
+	ColObjID%
+	
+	
+	FUNCTION Update:
+		
+	ENDFUNCTION
+	
+	FUNCTION Render:
+		
+	ENDFUNCTION
+	
+	FUNCTION Init: Path$, InfoPath$
+		LOCAL tmpObj% = GENX_OBJ()
+		X_LOADOBJ tmpObj, Path$
+		
+		self.ObjID = GENX_OBJ()
+		X_OBJSTART ObjID
+		FOR i = 0 TO X_NUMFACES(tmpObj)-1
+			LOCAL f[]
+			X_GETFACE tmpObj, 0, i, f[]
+			FOR j = 0 TO 2
+				X_OBJADDVERTEX f[j][0], f[j][1], f[j][2], f[j][3], f[j][4], f[j][5]
+			NEXT
+			X_OBJNEWGROUP
+		NEXT
+		X_OBJEND
+		
+		X_LOADOBJ tmpObj, ""
+	ENDFUNCTION
+ENDTYPE
+
+
+

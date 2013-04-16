@@ -18,7 +18,8 @@
  - KEIN Mapeditor (WIRKLICH!)
  - Wasser
  - Geschichte
- 
+ - Plattform
+
 ?ENDIF
 
 CONSTANT GAMESTATE_MENU = 0
@@ -29,6 +30,8 @@ GLOBAL GameState% = GAMESTATE_GAME
 
 GLOBAL CamX, CamY, CamZ, CamToX, CamToY, CamToZ
 
+GLOBAL CurrentMap AS TMap
+
 
 SETCURRENTDIR("Media") // go to media files
 
@@ -37,7 +40,7 @@ GOSUB Init
 WHILE TRUE
 	GOSUB Update
 	GOSUB Render
-	
+
 	SHOWSCREEN
 WEND
 
@@ -45,13 +48,13 @@ SUB Init:
 	SELECT GameState
 		CASE GAMESTATE_GAME
 			// game stuff
-			
+
 		CASE GAMESTATE_MENU
 			// menu stuff
-			
+
 		CASE GAMESTATE_OPTION
 			// option stuff
-			
+
 		DEFAULT
 			DEBUG "Unknown Gamestate"
 	ENDSELECT
@@ -61,13 +64,13 @@ SUB Update:
 	SELECT GameState
 		CASE GAMESTATE_GAME
 			// game stuff
-			
+			CurrentMap.Init("map0.ddd")
 		CASE GAMESTATE_MENU
 			// menu stuff
-			
+
 		CASE GAMESTATE_OPTION
 			// option stuff
-			
+
 		DEFAULT
 			DEBUG "Unknown Gamestate"
 	ENDSELECT
@@ -79,14 +82,19 @@ SUB Render:
 			// game stuff
 			X_MAKE3D 1, 500, 45
 			X_CAMERA CamX, CamY, CamZ, CamToX, CamToY, CamToZ
+
+			// 3d stuff
 			
+			X_MAKE2D
+			
+			// 2d stuff
 			
 		CASE GAMESTATE_MENU
 			// menu stuff
-			
+
 		CASE GAMESTATE_OPTION
 			// option stuff
-			
+
 		DEFAULT
 			DEBUG "Unknown Gamestate"
 	ENDSELECT
