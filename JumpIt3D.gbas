@@ -1,0 +1,101 @@
+// --------------------------------- //
+// Project: JumpIt3D
+// Start: Tuesday, April 16, 2013
+// IDE Version: 10.283
+
+// 2,5D Jump'n Run
+?IF 0
+ - Spielfigur - Kugel
+ - Gegner
+ 	* ...
+ - Trampolin  - ...
+ - Hindernis - ...
+ - Aufzug - ...
+ - Level - Anzahl ...
+ - Speichermöglichkeit
+ - Dekoration & Themes
+ - Spezialelement (Knobel)
+ - KEIN Mapeditor (WIRKLICH!)
+ - Wasser
+ - Geschichte
+ 
+?ENDIF
+
+CONSTANT GAMESTATE_MENU = 0
+CONSTANT GAMESTATE_GAME = 1
+CONSTANT GAMESTATE_OPTION = 2
+
+GLOBAL GameState% = GAMESTATE_GAME
+
+GLOBAL CamX, CamY, CamZ, CamToX, CamToY, CamToZ
+
+
+SETCURRENTDIR("Media") // go to media files
+
+
+GOSUB Init
+WHILE TRUE
+	GOSUB Update
+	GOSUB Render
+	
+	SHOWSCREEN
+WEND
+
+SUB Init:
+	SELECT GameState
+		CASE GAMESTATE_GAME
+			// game stuff
+			
+		CASE GAMESTATE_MENU
+			// menu stuff
+			
+		CASE GAMESTATE_OPTION
+			// option stuff
+			
+		DEFAULT
+			DEBUG "Unknown Gamestate"
+	ENDSELECT
+ENDSUB
+
+SUB Update:
+	SELECT GameState
+		CASE GAMESTATE_GAME
+			// game stuff
+			
+		CASE GAMESTATE_MENU
+			// menu stuff
+			
+		CASE GAMESTATE_OPTION
+			// option stuff
+			
+		DEFAULT
+			DEBUG "Unknown Gamestate"
+	ENDSELECT
+ENDSUB
+
+SUB Render:
+	SELECT GameState
+		CASE GAMESTATE_GAME
+			// game stuff
+			X_MAKE3D 1, 500, 45
+			X_CAMERA CamX, CamY, CamZ, CamToX, CamToY, CamToZ
+			
+			
+		CASE GAMESTATE_MENU
+			// menu stuff
+			
+		CASE GAMESTATE_OPTION
+			// option stuff
+			
+		DEFAULT
+			DEBUG "Unknown Gamestate"
+	ENDSELECT
+ENDSUB
+
+
+
+
+
+
+
+
