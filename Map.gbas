@@ -4,36 +4,55 @@
 // IDE Version: 10.283
 
 
+TYPE TMapBackSide
+	F1[]
+	F2[]
+	
+	FUNCTION Check%: other AS TMapBackSide
+		FOR i = 0 TO 2
+			IF NOT ( Equ(other.F2[i], self.F1[i]) AND Equ(other.F1[i], self.F2[i]) )
+				RETURN TRUE
+			ENDIF
+		NEXT
+		RETURN FALSE
+	ENDFUNCTION
+ENDTYPE
+
+FUNCTION Equ: A, B
+	LOCAL d = ABS(A-B)
+	RETURN d < .2
+ENDFUNCTION
+
 TYPE TMap
 	ObjID%
 	ColObjID%
-	
-	
+
+
 	FUNCTION Update:
-		
+		INC CamToX, (KEY(200) - KEY(208))*2
+		INC CamToZ, (KEY(203) - KEY(205))*2
 	ENDFUNCTION
-	
+
 	FUNCTION Render:
 		X_PUSHMATRIX
 		X_DRAWOBJ self.ObjID, 0
 		X_POPMATRIX
 	ENDFUNCTION
-	
+
 	FUNCTION Init: Path$, InfoPath$
 		LOCAL tmpObj% = GENX_OBJ()
 		X_LOADOBJ Path$, tmpObj
-		
+
 		self.ObjID = GENX_OBJ()
 		X_OBJSTART self.ObjID
 		GLOBAL TerrainWidth = 8
-		
-		LOCAL Faces$[]
+
+		LOCAL Faces[] AS TMapBackSide
 		FOR i = 0 TO X_NUMFACES(tmpObj)-1
 			LOCAL f[]
 			X_GETFACE tmpObj, 0, i, f[]
-			BuildStr(Faces$[], f[])
+			BuildBackSide(Faces[], f[])
 		NEXT
-		DEBUG "----------------------------------\n"
 		
 		FOR i = 0 TO X_NUMFACES(tmpObj)-1
 			LOCAL f[]
@@ -42,44 +61,42 @@ TYPE TMap
 				X_OBJADDVERTEX f[j][0], f[j][1], f[j][2], f[j][3], f[j][4], f[j][5]
 			NEXT
 			X_OBJNEWGROUP
-			
-			
+
+
 			// y inkrementieren
-			LOCAL TmpFace$[]
-			BuildStr(TmpFace$[], f[])
-			
+			LOCAL TmpFace[] AS TMapBackSide
+			BuildBackSide(TmpFace[], f[])
+
 			FOR j = 0 TO 2
 				LOCAL count% = 0
-				FOR k = 0 TO 2
-					FOREACH FaceNames$ IN Faces$[]
-						IF FaceNames$ = TmpFace$[k]
-							INC count
-						ENDIF
-					NEXT
+				FOREACH F IN Faces[]
+					IF NOT F.Check(TmpFace[j])
+						INC count
+					ENDIF
 				NEXT
 				DEBUG count+"\n"
-				IF count <= 6
+				IF count = 0
 					X_OBJADDVERTEX f[j][0]			, f[j][1]						, f[j][2]			, f[j][3]			, f[j][4]			, RGB(255,0,0)
 					X_OBJADDVERTEX f[MOD(j+1,3)][0]	, f[MOD(j+1,3)][1]				, f[MOD(j+1,3)][2]	, f[MOD(j+1,3)][3]	, f[MOD(j+1,3)][4]	, RGB(255,0,0)
-					X_OBJADDVERTEX f[j][0]			, f[j][1]+TerrainWidth			, f[j][2]			, f[j][3]			, f[j][4]			, RGB(255,0,0)
-					X_OBJADDVERTEX f[MOD(j+1,3)][0]	, f[MOD(j+1,3)][1]+TerrainWidth	, f[MOD(j+1,3)][2]	, f[MOD(j+1,3)][3]	, f[MOD(j+1,3)][4]	, RGB(255,0,0)
+					X_OBJADDVERTEX f[j][0]+TerrainWidth			, f[j][1]		, f[j][2]			, f[j][3]			, f[j][4]			, RGB(255,0,0)
+					X_OBJADDVERTEX f[MOD(j+1,3)][0]+TerrainWidth	, f[MOD(j+1,3)][1]	, f[MOD(j+1,3)][2]	, f[MOD(j+1,3)][3]	, f[MOD(j+1,3)][4]	, RGB(255,0,0)
 					X_OBJNEWGROUP
 				ENDIF
 			NEXT
-			
+
 		NEXT
 		X_OBJEND
-		
+
 		X_LOADOBJ tmpObj, ""
 	ENDFUNCTION
 ENDTYPE
 
-FUNCTION BuildStr: Faces$[], f[]
+FUNCTION BuildBackSide: Faces[] AS TMapBackSide, f[]
 	FOR j = 0 TO 2
-		LOCAL Str$ = ""
-		INC Str$, INTEGER(f[j][0])+" "+INTEGER(f[j][1])+" "+INTEGER(f[j][2])+"\n"
-		INC Str$, INTEGER(f[MOD(j+1,3)][0])+" "+INTEGER(f[MOD(j+1,3)][1])+" "+INTEGER(f[MOD(j+1,3)][2])+"\n"
-		DIMPUSH Faces$[], Str$
+		LOCAL MapSide AS TMapBackSide
+		DIMDATA MapSide.F1[], f[j][0], f[j][1], f[j][2]
+		DIMDATA MapSide.F2[], f[MOD(j+1,3)][0], f[MOD(j+1,3)][1], f[MOD(j+1,3)][2]
+		DIMPUSH Faces[], MapSide
 	NEXT
 ENDFUNCTION
 

@@ -47,7 +47,7 @@ GOSUB Init
 WHILE TRUE
 	GOSUB Update
 	GOSUB Render
-	
+
 	SHOWSCREEN
 WEND
 
@@ -89,18 +89,19 @@ SUB Render:
 			// game stuff
 			X_MAKE3D 1, 500, 45
 			X_CAMERA CamX, CamY, CamZ, CamToX, CamToY, CamToZ
-			X_AMBIENT_LT 0, RGB(220,220,220)
+			X_SPOT_LT 0, RGB(255,255,255), CamX, CamY, CamZ, CamToX, CamToY, CamToZ, 360
+			//X_AMBIENT_LT 0, RGB(220,220,220)
 			X_MOVEMENT 0,0,0
 			X_DRAWAXES 0,0,0
-			
+
 			// 3d stuff
 			CurrentMap.Render()
-			
-			
+
+
 			X_MAKE2D
-			
+
 			// 2d stuff
-			
+
 		CASE GAMESTATE_MENU
 			// menu stuff
 
