@@ -4,3 +4,21 @@
 // IDE Version: 10.283
 
 
+TYPE TPlayer
+	M AS TMoveable
+	
+	FUNCTION Update:
+		self.M.Update()
+	ENDFUNCTION
+	
+	FUNCTION Render:
+		X_PUSHMATRIX
+		self.M.SetMovement()
+		X_DRAWOBJ PlayerObjID, 0
+		X_POPMATRIX
+	ENDFUNCTION
+	
+	FUNCTION Init: X, Y
+		self.M.SetPosition(X,Y)
+	ENDFUNCTION
+ENDTYPE

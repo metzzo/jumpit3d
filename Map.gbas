@@ -3,6 +3,7 @@
 // Start: Tuesday, April 16, 2013
 // IDE Version: 10.283
 
+GLOBAL TerrainWidth = 8
 
 TYPE TMapBackSide
 	F1[]
@@ -45,7 +46,7 @@ TYPE TMap
 
 		self.ObjID = GENX_OBJ()
 		X_OBJSTART self.ObjID
-		GLOBAL TerrainWidth = 8
+		
 
 		LOCAL Faces[] AS TMapBackSide
 		FOR i = 0 TO X_NUMFACES(tmpObj)-1
@@ -58,7 +59,7 @@ TYPE TMap
 			LOCAL f[]
 			X_GETFACE tmpObj, 0, i, f[]
 			FOR j = 0 TO 2
-				X_OBJADDVERTEX f[j][0], f[j][1], f[j][2], f[j][3], f[j][4], f[j][5]
+				X_OBJADDVERTEX f[j][0]-TerrainWidth/2, f[j][1], f[j][2], f[j][3], f[j][4], f[j][5]
 			NEXT
 			X_OBJNEWGROUP
 
@@ -76,10 +77,10 @@ TYPE TMap
 				NEXT
 				DEBUG count+"\n"
 				IF count = 0
-					X_OBJADDVERTEX f[j][0]			, f[j][1]						, f[j][2]			, f[j][3]			, f[j][4]			, RGB(255,0,0)
-					X_OBJADDVERTEX f[MOD(j+1,3)][0]	, f[MOD(j+1,3)][1]				, f[MOD(j+1,3)][2]	, f[MOD(j+1,3)][3]	, f[MOD(j+1,3)][4]	, RGB(255,0,0)
-					X_OBJADDVERTEX f[j][0]+TerrainWidth			, f[j][1]		, f[j][2]			, f[j][3]			, f[j][4]			, RGB(255,0,0)
-					X_OBJADDVERTEX f[MOD(j+1,3)][0]+TerrainWidth	, f[MOD(j+1,3)][1]	, f[MOD(j+1,3)][2]	, f[MOD(j+1,3)][3]	, f[MOD(j+1,3)][4]	, RGB(255,0,0)
+					X_OBJADDVERTEX f[j][0]-TerrainWidth/2			, f[j][1]						, f[j][2]			, f[j][3]			, f[j][4]			, RGB(255,0,0)
+					X_OBJADDVERTEX f[MOD(j+1,3)][0]-TerrainWidth/2	, f[MOD(j+1,3)][1]				, f[MOD(j+1,3)][2]	, f[MOD(j+1,3)][3]	, f[MOD(j+1,3)][4]	, RGB(255,0,0)
+					X_OBJADDVERTEX f[j][0]+TerrainWidth/2			, f[j][1]		, f[j][2]			, f[j][3]			, f[j][4]			, RGB(255,0,0)
+					X_OBJADDVERTEX f[MOD(j+1,3)][0]+TerrainWidth/2	, f[MOD(j+1,3)][1]	, f[MOD(j+1,3)][2]	, f[MOD(j+1,3)][3]	, f[MOD(j+1,3)][4]	, RGB(255,0,0)
 					X_OBJNEWGROUP
 				ENDIF
 			NEXT

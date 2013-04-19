@@ -1,0 +1,18 @@
+// --------------------------------- //
+// Project: JumpIt3D
+// Start: Friday, April 19, 2013
+// IDE Version: 10.283
+
+
+FUNCTION LoadModel%: Path$
+	LOCAL id% = GENX_OBJ()
+	X_LOADOBJ "model/"+Path$, id
+	IF X_NUMFACES(id) = 0
+		DEBUG "Model "+Path$+" does not exist \n"
+	ENDIF
+	
+	RETURN id
+ENDFUNCTION
+
+
+

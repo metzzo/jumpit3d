@@ -3,4 +3,29 @@
 // Start: Tuesday, April 16, 2013
 // IDE Version: 10.283
 
+CONSTANT GRAVITY = -.05
 
+TYPE TMoveable
+	X;Y
+	SpeedX;SpeedY
+	
+	
+	FUNCTION Update:
+		// schwerkraft
+		INC self.SpeedY, GRAVITY
+		
+		INC self.X, self.SpeedX
+		INC self.Y, self.SpeedY
+		
+	ENDFUNCTION
+	
+	FUNCTION SetMovement:
+		X_MOVEMENT 0, self.Y, self.X
+	ENDFUNCTION
+	
+	
+	FUNCTION SetPosition: X, Y
+		self.X = X
+		self.Y = Y
+	ENDFUNCTION
+ENDTYPE

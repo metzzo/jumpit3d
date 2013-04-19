@@ -38,8 +38,11 @@ CamZ = 8
 
 
 GLOBAL CurrentMap AS TMap
+GLOBAL CurrentPlayer AS TPlayer
 
-
+GLOBAL PlayerObjID%
+PlayerObjID = GENX_OBJ()
+CreateSphere(PlayerObjID, TerrainWidth/6, 32, RGB(0,255,0))
 
 
 
@@ -56,6 +59,8 @@ SUB Init:
 		CASE GAMESTATE_GAME
 			// game stuff
 			CurrentMap.Init("map/map0.ddd", "map/map0.data")
+			
+			CurrentPlayer.Init(0, 0)
 		CASE GAMESTATE_MENU
 			// menu stuff
 
@@ -72,6 +77,7 @@ SUB Update:
 		CASE GAMESTATE_GAME
 			// game stuff
 			CurrentMap.Update()
+			CurrentPlayer.Update()
 		CASE GAMESTATE_MENU
 			// menu stuff
 
@@ -96,6 +102,8 @@ SUB Render:
 
 			// 3d stuff
 			CurrentMap.Render()
+			
+			CurrentPlayer.Render()
 
 
 			X_MAKE2D

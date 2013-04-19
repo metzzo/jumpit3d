@@ -1,0 +1,351 @@
+// --------------------------------- //
+// Project: 3DPrimitives
+// Start: Saturday, February 07, 2004
+// IDE Version: 1.40209
+
+
+// Here is the creation of objects that are built in in
+// DarkBasic. With GLBasic you can easily modify the source code
+// And create _any_ object manually!
+
+// If you need a sphere, a cube and a cone, you'd do this normally:
+// CreateSphere 1, r, n, col
+// X_SAVEOBJ "sphere.ddd", 1
+// ... in Game:
+// X_LOADOBJ "sphere.ddd", 1
+//
+// Yes, you can _save_ and load user created objects in GLBasic!
+
+
+// ------------------------------------------------------------- //
+// -=#  SPHERE  #=-
+// ------------------------------------------------------------- //
+FUNCTION CreateSphere: num, r, n, col
+LOCAL i,j, theta1, theta2, theta3, pi
+	pi = ACOS(0)*2
+	IF r < 0 THEN r = -r
+	IF n < 4 THEN n = 4
+
+	X_AUTONORMALS 2 // smooth edges
+	X_OBJSTART num
+	FOR j=0 TO INTEGER(n/2) -1
+		theta1 = j * 2*pi / n - pi/2;
+		theta2 = (j + 1) * 2*pi / n - pi/2;
+		FOR i=0 TO n
+			theta3 = i * 2*pi / n;
+			X_OBJADDVERTEX	r*COS(theta2) * COS(theta3), r*SIN(theta2), _
+							r*COS(theta2) * SIN(theta3), i/n, 2*(j+1)/n, col
+			X_OBJADDVERTEX	r*COS(theta1) * COS(theta3), r*SIN(theta1), _
+							r*COS(theta1) * SIN(theta3), i/n, 2*j/n, col
+		NEXT
+		X_OBJNEWGROUP
+	NEXT
+	X_OBJEND
+ENDFUNCTION // n
+
+
+// ------------------------------------------------------------- //
+// -=#  CREATECUBE_NO_TEXTURE: Fast but without texture  #=-
+// ------------------------------------------------------------- //
+FUNCTION CreateCube_no_texture: num, sz
+	// Diese Variablen sind als LOCAL definiert:
+	// num, sz,
+
+	// 2-4-3-1
+	// | | | |
+	// 6-8-7-5
+	//   | |
+	//   6-5
+	//   | |
+	//   2-1
+	//   | |
+	//   4-3 Strip: 4 3 8 7 5 3 1 4 2 8 6 5 2 1
+
+	// Normals + culling is wrong!!
+
+LOCAL s[], n, m, x,y,z
+	DIM s[14]
+	s[0]=4; s[1]=3; s[2]=8; s[3]=7; s[4]=5
+	s[5]=3; s[6]=1; s[7]=4; s[8]=2; s[9]=8
+	s[10]=6;s[11]=5;s[12]=2;s[13]=1
+	X_OBJSTART num
+		FOR m=0 TO 13
+			n=s[m]-1
+			x = MOD(n, 2)
+			y = 1-INTEGER(n/4)
+			z = 1-MOD(INTEGER(n/2), 2)
+			X_OBJADDVERTEX  x-.5, y-.5, z-.5, 0, 0, RGB(255,255,255)
+		NEXT
+	X_OBJEND
+ENDFUNCTION
+
+
+
+
+// ------------------------------------------------------------- //
+// -=#  CREATECUBE  #=-
+// ------------------------------------------------------------- //
+FUNCTION CreateCube: num, sz, col
+	// Diese Variablen sind als LOCAL definiert:
+	// num, sz,
+	X_AUTONORMALS 1 // For a cube, hard edges
+	sz=sz/2
+	X_OBJSTART num
+		// Front Face
+		X_OBJADDVERTEX  sz, -sz,  sz, 1, 0, col
+		X_OBJADDVERTEX -sz, -sz,  sz, 0, 0, col
+		X_OBJADDVERTEX  sz,  sz,  sz, 1, 1, col
+		X_OBJADDVERTEX -sz,  sz,  sz, 0, 1, col
+		X_OBJNEWGROUP
+		// Back Face
+		X_OBJADDVERTEX -sz,  sz, -sz, 1, 1, col
+		X_OBJADDVERTEX -sz, -sz, -sz, 1, 0, col
+		X_OBJADDVERTEX  sz,  sz, -sz, 0, 1, col
+		X_OBJADDVERTEX  sz, -sz, -sz, 0, 0, col
+		X_OBJNEWGROUP
+		// Top Face
+		X_OBJADDVERTEX -sz,  sz,  sz, 0, 0, col
+		X_OBJADDVERTEX -sz,  sz, -sz, 0, 1, col
+		X_OBJADDVERTEX  sz,  sz,  sz, 1, 0, col
+		X_OBJADDVERTEX  sz,  sz, -sz, 1, 1, col
+		X_OBJNEWGROUP
+		// Bottom Face
+		X_OBJADDVERTEX  sz, -sz, -sz, 0, 1, col
+		X_OBJADDVERTEX -sz, -sz, -sz, 1, 1, col
+		X_OBJADDVERTEX  sz, -sz,  sz, 0, 0, col
+		X_OBJADDVERTEX -sz, -sz,  sz, 1, 0, col
+		X_OBJNEWGROUP
+		// Right face
+		X_OBJADDVERTEX  sz,  sz, -sz, 1, 1, col
+		X_OBJADDVERTEX  sz, -sz, -sz, 1, 0, col
+		X_OBJADDVERTEX  sz,  sz,  sz, 0, 1, col
+		X_OBJADDVERTEX  sz, -sz,  sz, 0, 0, col
+		X_OBJNEWGROUP
+		// Left Face
+		X_OBJADDVERTEX -sz, -sz,  sz, 1, 0, col
+		X_OBJADDVERTEX -sz, -sz, -sz, 0, 0, col
+		X_OBJADDVERTEX -sz,  sz,  sz, 1, 1, col
+		X_OBJADDVERTEX -sz,  sz, -sz, 0, 1, col
+		X_OBJNEWGROUP
+	X_OBJEND
+
+ENDFUNCTION // sz
+
+
+// ------------------------------------------------------------- //
+// -=#  CREATECYLINDER - also creates a cone if any radius = 0  #=-
+// ------------------------------------------------------------- //
+FUNCTION CreateCylinder: num, baseRadius, topRadius, height, slices, stacks, col
+LOCAL da, r, dr, dz, x, y, z, i, j
+LOCAL x1, y1, x2, y2
+	da = 360 / slices
+	dr = (topRadius-baseRadius) / stacks
+	dz = height / stacks
+
+	X_AUTONORMALS 2
+	X_OBJSTART num
+	FOR i=0 TO slices-1
+		x1 = COS(i*da)
+		y1 = SIN(i*da)
+		x2 = COS((i+1)*da)
+		y2 = SIN((i+1)*da)
+		z = 0
+		r = baseRadius
+
+		// Bottom lid
+		IF baseRadius>0
+			X_OBJADDVERTEX 0, 0, 0,  .5, .5, col
+			X_OBJADDVERTEX x1*r, y1*r, 0, x1/2+.5, y1/2+.5, col
+			X_OBJADDVERTEX x2*r, y2*r, 0, x2/2+.5, y2/2+.5, col
+			X_OBJNEWGROUP
+		ENDIF
+		// side
+		FOR j=0 TO stacks
+			X_OBJADDVERTEX x2*r, y2*r, z, (i+1)/slices,  j/stacks, col
+			X_OBJADDVERTEX x1*r, y1*r, z,  i   /slices,  j/stacks, col
+			z = z+dz
+			r = r+dr
+		NEXT
+		// Top lid
+		IF topRadius>0
+			X_OBJNEWGROUP
+			X_OBJADDVERTEX x2*r, y2*r, height, x2/2+.5, y2/2+.5, col
+			X_OBJADDVERTEX x1*r, y1*r, height, x1/2+.5, y1/2+.5, col
+			X_OBJADDVERTEX 0, 0, height,  .5, .5, col
+		ENDIF
+		X_OBJNEWGROUP
+	NEXT
+	X_OBJEND
+ENDFUNCTION
+
+
+
+// ------------------------------------------------------------- //
+// -=#  CREATETORUS  #=-
+//
+// By Samuel R. Buss
+// http://math.ucsd.edu/~sbuss/MathCG
+// ------------------------------------------------------------- //
+FUNCTION CreateTorus: num, MinorRadius, MajorRadius, NumWraps, NumPerWrap, TextureWrapVert, TextureWrapHoriz, col
+	// Diese Variablen sind als LOCAL definiert:
+	// x, y,
+	// Draw the torus
+LOCAL i, di, j, wrapFrac, wrapFracTex, phi, thetaFrac, thetaFracTex, theta
+LOCAL x, y, z, r
+
+	X_AUTONORMALS 2
+	X_OBJSTART num
+	FOR di=0 TO NumWraps-1
+		FOR j=0 TO NumPerWrap
+			FOR i=di+1 TO di STEP -1
+				wrapFrac = MOD(j, NumPerWrap)/NumPerWrap
+				wrapFracTex = j/NumPerWrap
+				phi = 360*wrapFrac
+				thetaFrac = (MOD(i, NumWraps)+wrapFracTex)/NumWraps
+				thetaFracTex = (i+wrapFracTex)/NumWraps
+				theta = 360*thetaFrac
+				r = MajorRadius + MinorRadius*COS(phi)
+				x = SIN(theta)*r
+				z = COS(theta)*r
+				y = MinorRadius*SIN(phi)
+				X_OBJADDVERTEX x,y,z,  thetaFracTex*TextureWrapVert, wrapFracTex*TextureWrapHoriz, col
+			NEXT
+		NEXT
+		X_OBJNEWGROUP
+	NEXT
+	X_OBJEND
+ENDFUNCTION // y
+
+
+
+
+
+
+
+// ------------------------------------------------------------- //
+// -=#  CREATEHELIX  #=-
+// Creates a helix aka. spiral object
+// R1    : Raduis of Helix
+// R2    : Radius of Helix Intersection
+// Nu    : Number of elemtents along helix
+// Nv    : Number of elements around intersection
+// cycles: Number or spiral repetitions
+// height: Complete length of the helix
+// col   : Color of Helix-Material
+// ------------------------------------------------------------- //
+FUNCTION CreateHelix: num, R1, R2, Nu, Nv, cycles, height, col
+LOCAL du, dv, u, v, x, y, z, tx, ty, q, nu, nv, i, j
+LOCAL qu, qv
+	du = cycles * 360 / Nu
+	dv = 360 / Nv
+
+	X_AUTONORMALS 2
+	X_OBJSTART num
+	FOR i=0 TO Nu-1
+		u = i * du
+		FOR j=0 TO Nv-1
+			v = j * dv
+			FOR q = 0 TO 3
+				nu=0; nv=0 // Use next u/next v
+
+				IF q=0 OR q=3 THEN nu=1
+				IF q>1 THEN nv=1
+				nu = MOD(q, 2)
+				nv=INTEGER(q / 2)
+				qu = u+nu*du
+				qv = v+nv*dv
+
+				x = R1 * COS(qu) * (1 + COS(qv) * R2/R1)
+				z = R1 * SIN(qu) * (1 + COS(qv) * R2/R1)
+				y = SIN(qv)*R2 + qu*height/(360 * cycles)
+				tx = (i+nu)/Nu * cycles
+				ty = (j+nv)/Nv
+				X_OBJADDVERTEX x, y, z, tx, ty, col
+			NEXT
+		NEXT
+		X_OBJNEWGROUP
+	NEXT
+	X_OBJEND
+ENDFUNCTION
+
+
+
+// ------------------------------------------------------------- //
+// -=#  CREATEHELICOID  #=-
+// Creates a helicoid - minimal surface of a helix
+// R1    : Raduis of Helix
+// Nu    : Number of elemtents along helix
+// Nv    : Number of elements around intersection
+// cycles: Number or spiral repetitions
+// height: Complete length of the helix
+// col   : Color of Helix-Material
+// ------------------------------------------------------------- //
+FUNCTION CreateHelicoid: num, R1, Nu, Nv, cycles, height, col
+LOCAL du, dv, u, v, x, y, z, tx, ty, q, nu, nv
+LOCAL i, j, qu, qv
+	du = cycles*360 / Nu
+	dv = R1 / Nv
+
+	X_AUTONORMALS 2
+	X_OBJSTART num
+	FOR i=0 TO Nu-1
+		u = i * du
+		FOR j=0 TO Nv-1
+			v = j * dv
+			FOR q = 0 TO 3
+				nu=0; nv=0 // Use next u/next v
+
+				IF q=0 OR q=3 THEN nu=1
+				IF q>1 THEN nv=1
+				nu = MOD(q, 2)
+				nv=INTEGER(q / 2)
+				qu = u+nu*du
+				qv = v+nv*dv
+
+				x = qv * COS(qu)
+				z = qv * SIN(qu)
+				y = qu/(cycles*360) * height
+				tx = (i+nu)/Nu * cycles
+				ty = (j+nv)/Nv
+				X_OBJADDVERTEX x, y, z, tx, ty, col
+			NEXT
+		NEXT
+		X_OBJNEWGROUP
+	NEXT
+	X_OBJEND
+ENDFUNCTION
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
