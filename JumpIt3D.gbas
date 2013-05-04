@@ -31,10 +31,10 @@ CONSTANT GAMESTATE_OPTION = 2
 GLOBAL GameState% = GAMESTATE_GAME
 
 GLOBAL CamX, CamY, CamZ, CamToX, CamToY, CamToZ
-
-CamX = -8
-CamY = 28
-CamZ = 8
+CONSTANT PLAYER_2_CAMERADIST = 18
+CamX = PLAYER_2_CAMERADIST
+CamY = 0
+CamZ = 0
 
 
 GLOBAL CurrentMap AS TMap
@@ -42,7 +42,7 @@ GLOBAL CurrentPlayer AS TPlayer
 
 GLOBAL PlayerObjID%
 PlayerObjID = GENX_OBJ()
-CreateSphere(PlayerObjID, TerrainWidth/6, 32, RGB(0,255,0))
+CreateSphere(PlayerObjID, TerrainWidth/8, 32, RGB(0,255,0))
 
 
 
@@ -59,7 +59,7 @@ SUB Init:
 		CASE GAMESTATE_GAME
 			// game stuff
 			CurrentMap.Init("map/map0.ddd", "map/map0.data")
-			
+
 			CurrentPlayer.Init(0, 0)
 		CASE GAMESTATE_MENU
 			// menu stuff
@@ -102,7 +102,7 @@ SUB Render:
 
 			// 3d stuff
 			CurrentMap.Render()
-			
+
 			CurrentPlayer.Render()
 
 

@@ -6,19 +6,37 @@
 
 TYPE TPlayer
 	M AS TMoveable
-	
+
 	FUNCTION Update:
+		INC self.M.SpeedX, (KEY(203)-KEY(205))*.075
+		
+		IF (KEY(200) OR KEY(57))
+			DEC self.M.Y, .1
+			IF self.M.IsCollision()
+				INC self.M.SpeedY, 2
+			ENDIF
+			INC self.M.Y, .1
+		ENDIF
+		
+		
+		CamToY = self.M.Y
+		CamToZ = self.M.X
+		CamY = (CamToY+ PLAYER_2_CAMERADIST + CamY*4)/5
+		CamZ = (CamToZ + CamZ*4)/5
+		
+		
 		self.M.Update()
 	ENDFUNCTION
-	
+
 	FUNCTION Render:
 		X_PUSHMATRIX
 		self.M.SetMovement()
 		X_DRAWOBJ PlayerObjID, 0
 		X_POPMATRIX
 	ENDFUNCTION
-	
+
 	FUNCTION Init: X, Y
 		self.M.SetPosition(X,Y)
+		self.M.SetRadius(TerrainWidth/8)
 	ENDFUNCTION
 ENDTYPE

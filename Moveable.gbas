@@ -4,28 +4,68 @@
 // IDE Version: 10.283
 
 CONSTANT GRAVITY = -.05
+CONSTANT FRICTIONX = .85, FRICTIONY = .95
+CONSTANT TOLERANCE = 1
 
 TYPE TMoveable
 	X;Y
 	SpeedX;SpeedY
-	
-	
+	Radius = 0
+
+
 	FUNCTION Update:
 		// schwerkraft
 		INC self.SpeedY, GRAVITY
 		
+		self.SpeedX = self.SpeedX * FRICTIONX
+		self.SpeedY = self.SpeedY * FRICTIONY
+		
+		
+		
+		LOCAL OldX = self.X
 		INC self.X, self.SpeedX
+		IF self.IsCollision()
+			LOCAL OldY = self.Y
+			LOCAL CanGoUp% = FALSE
+			FOR y = 0 TO TOLERANCE STEP .1
+				INC self.Y, .1
+				IF NOT self.IsCollision()
+					CanGoUp = TRUE
+					BREAK
+				ENDIF
+			NEXT
+			IF NOT CanGoUp
+				self.Y = OldY
+				self.X = OldX
+				self.SpeedX = 0
+			ENDIF
+		ENDIF
+		
+		
+		LOCAL OldY = self.Y
 		INC self.Y, self.SpeedY
+		IF self.IsCollision()
+			self.Y = OldY
+			self.SpeedY = 0
+		ENDIF
 		
 	ENDFUNCTION
-	
+
 	FUNCTION SetMovement:
 		X_MOVEMENT 0, self.Y, self.X
 	ENDFUNCTION
-	
-	
+
+
 	FUNCTION SetPosition: X, Y
 		self.X = X
 		self.Y = Y
+	ENDFUNCTION
+	
+	FUNCTION SetRadius: Radius
+		self.Radius = Radius
+	ENDFUNCTION
+	
+	FUNCTION IsCollision: 
+		RETURN X_COLLISION(CurrentMap.ColObjID, 0, self.Radius, 0, self.Y, self.X)
 	ENDFUNCTION
 ENDTYPE

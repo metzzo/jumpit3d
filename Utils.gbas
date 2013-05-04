@@ -10,7 +10,7 @@ FUNCTION LoadModel%: Path$
 	IF X_NUMFACES(id) = 0
 		DEBUG "Model "+Path$+" does not exist \n"
 	ENDIF
-	
+
 	RETURN id
 ENDFUNCTION
 
