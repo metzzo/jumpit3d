@@ -28,10 +28,11 @@ TYPE TMap
 	ObjID%
 	ColObjID%
 	OrigObjID%
-
+	MinY%; MaxY
+	
 
 	FUNCTION Update:
-		
+
 	ENDFUNCTION
 
 	FUNCTION Render:
@@ -59,22 +60,27 @@ TYPE TMap
 			X_GETFACE self.OrigObjID, 0, i, f[]
 			FOR j = 0 TO 2
 				X_OBJADDVERTEX f[j][0]-TerrainWidth/2, f[j][1], f[j][2], f[j][3], f[j][4], f[j][5]
+				
+				LOCAL myY = f[j][2]
+				IF myY < self.MinY THEN self.MinY = myY
+				IF myY > self.MinY THEN self.MaxY = myY
 			NEXT
 			X_OBJNEWGROUP
 
 			self.CreateBackside(Faces, i)
 		NEXT
 		X_OBJEND
-		
+		DEBUG "MinY: "+self.MinY+" MaxY "+self.MaxY+"\n"
+
 		self.ColObjID = GENX_OBJ()
 		X_OBJSTART self.ColObjID
 		FOR i = 0 TO X_NUMFACES(self.OrigObjID)-1
 			self.CreateBackside(Faces, i)
 		NEXT
 		X_OBJEND
-		
+
 	ENDFUNCTION
-	
+
 	FUNCTION CreateBackside: Faces[] AS TMapBackSide, i%
 		LOCAL f[]
 		X_GETFACE self.OrigObjID, 0, i, f[]
@@ -94,10 +100,10 @@ TYPE TMap
 				X_OBJADDVERTEX f[MOD(j+1,3)][0]+TerrainWidth/2	, f[MOD(j+1,3)][1]	, f[MOD(j+1,3)][2]	, f[MOD(j+1,3)][3]	, f[MOD(j+1,3)][4]	, RGB(255,0,0)
 				X_OBJADDVERTEX f[j][0]-TerrainWidth/2			, f[j][1]						, f[j][2]			, f[j][3]			, f[j][4]			, RGB(255,0,0)
 				X_OBJADDVERTEX f[MOD(j+1,3)][0]-TerrainWidth/2	, f[MOD(j+1,3)][1]				, f[MOD(j+1,3)][2]	, f[MOD(j+1,3)][3]	, f[MOD(j+1,3)][4]	, RGB(255,0,0)
-				
-				
-				
-				
+
+
+
+
 				X_OBJNEWGROUP
 			ENDIF
 		NEXT

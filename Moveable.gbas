@@ -16,12 +16,12 @@ TYPE TMoveable
 	FUNCTION Update:
 		// schwerkraft
 		INC self.SpeedY, GRAVITY
-		
+
 		self.SpeedX = self.SpeedX * FRICTIONX
 		self.SpeedY = self.SpeedY * FRICTIONY
-		
-		
-		
+
+
+
 		LOCAL OldX = self.X
 		INC self.X, self.SpeedX
 		IF self.IsCollision()
@@ -40,15 +40,15 @@ TYPE TMoveable
 				self.SpeedX = 0
 			ENDIF
 		ENDIF
-		
-		
+
+
 		LOCAL OldY = self.Y
 		INC self.Y, self.SpeedY
 		IF self.IsCollision()
 			self.Y = OldY
 			self.SpeedY = 0
 		ENDIF
-		
+
 	ENDFUNCTION
 
 	FUNCTION SetMovement:
@@ -60,12 +60,12 @@ TYPE TMoveable
 		self.X = X
 		self.Y = Y
 	ENDFUNCTION
-	
+
 	FUNCTION SetRadius: Radius
 		self.Radius = Radius
 	ENDFUNCTION
-	
-	FUNCTION IsCollision: 
+
+	FUNCTION IsCollision:
 		RETURN X_COLLISION(CurrentMap.ColObjID, 0, self.Radius, 0, self.Y, self.X)
 	ENDFUNCTION
 ENDTYPE

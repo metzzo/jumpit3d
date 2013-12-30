@@ -5,7 +5,7 @@
 
 // 2,5D Jump'n Run
 ?IF 0
- - Spielfigur - Kugel
+// - Spielfigur - Kugel
  - Gegner
  	* ...
  - Trampolin  - ...
@@ -107,7 +107,10 @@ SUB Render:
 
 
 			X_MAKE2D
-
+			// debug
+			PRINT "PlayerX: " + CurrentPlayer.M.X+" PlayerY: "+CurrentPlayer.M.Y, 10, 10, FALSE
+			
+			
 			// 2d stuff
 
 		CASE GAMESTATE_MENU
