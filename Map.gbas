@@ -78,7 +78,24 @@ TYPE TMap
 			self.CreateBackside(Faces, i)
 		NEXT
 		X_OBJEND
-
+		
+		// load info
+		LOCAL chn% = GENFILE()
+		IF NOT OPENFILE(chn, InfoPath$, 1) THEN DEBUG "Could not read level "+InfoPath$+"\n"
+		WHILE NOT ENDOFFILE(chn)
+			LOCAL line$, params$[]
+			READLINE chn, line$
+			IF SPLITSTR(line$, params$[], " ", FALSE) > 0
+				SELECT params$[0]
+					CASE "trampoline"
+						
+					CASE "lift"
+						
+					DEFAULT
+						DEBUG "Unknown parameter "+params$[0]+"\n"
+				ENDSELECT
+			ENDIF
+		WEND
 	ENDFUNCTION
 
 	FUNCTION CreateBackside: Faces[] AS TMapBackSide, i%
@@ -94,7 +111,6 @@ TYPE TMap
 					INC count
 				ENDIF
 			NEXT
-			DEBUG count+"\n"
 			IF count = 0
 				X_OBJADDVERTEX f[j][0]+TerrainWidth/2			, f[j][1]		, f[j][2]			, f[j][3]			, f[j][4]			, RGB(255,0,0)
 				X_OBJADDVERTEX f[MOD(j+1,3)][0]+TerrainWidth/2	, f[MOD(j+1,3)][1]	, f[MOD(j+1,3)][2]	, f[MOD(j+1,3)][3]	, f[MOD(j+1,3)][4]	, RGB(255,0,0)

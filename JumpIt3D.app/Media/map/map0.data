@@ -1,7 +1,4 @@
-OBJEKT PARAMETER1 PARAMETER2 PARAMETER3
 trampoline X Y Bounciness
 lift StartX StartY EndX EndY Speed
-...
-
 
 
