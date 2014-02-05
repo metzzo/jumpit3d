@@ -3,6 +3,8 @@
 // Start: Tuesday, April 16, 2013
 // IDE Version: 10.283
 
+GLOBAL CurrentPlayer AS TPlayer
+GLOBAL PlayerObjID%
 
 TYPE TPlayer
 	M AS TMoveable
@@ -10,7 +12,7 @@ TYPE TPlayer
 
 	FUNCTION Update:
 		INC self.M.SpeedX, (KEY(203)-KEY(205))*.075
-		
+
 
 		IF (KEY(200) OR KEY(57))
 			DEC self.M.Y, .1
@@ -19,13 +21,12 @@ TYPE TPlayer
 			ENDIF
 			INC self.M.Y, .1
 		ENDIF
-
-
+		
 		CamToY = self.M.Y
 		CamToZ = self.M.X
 		CamY = (CamToY+ PLAYER_2_CAMERADIST + CamY*4)/5
 		CamZ = (CamToZ + CamZ*4)/5
-		
+
 		IF self.M.Y < CurrentMap.MinY - 10
 			self.Reset()
 		ENDIF
@@ -44,12 +45,32 @@ TYPE TPlayer
 		self.StartX = X
 		self.StartY = Y
 		
-		self.M.SetRadius(TerrainWidth/8)
+		LOCAL p AS CheckCollision
+		p = CheckCollision_Player
+
+		self.M.SetCollisionCheck(p)
 		
+		CONSTANT PLAYER_RADIUS = 0
+		DIMDATA self.M.Info[], TerrainWidth/8
+
 		self.Reset()
 	ENDFUNCTION
-	
+
 	FUNCTION Reset:
 		self.M.SetPosition(self.StartX,self.StartY)
 	ENDFUNCTION
 ENDTYPE
+
+
+FUNCTION CheckCollision_Player: M AS TMoveable
+	LOCAL Radius = M.Info[PLAYER_RADIUS]
+	RETURN X_COLLISION(CurrentMap.ColObjID, 0, Radius, 0, M.Y, M.X)
+ENDFUNCTION
+
+
+SUB Init_Player:
+	PlayerObjID = GENX_OBJ()
+	CreateSphere(PlayerObjID, TerrainWidth/8, 32, RGB(0,255,0))
+
+
+ENDSUB

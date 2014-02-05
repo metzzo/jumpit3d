@@ -39,15 +39,6 @@ CamY = 0
 CamZ = 0
 
 
-GLOBAL CurrentMap AS TMap
-GLOBAL CurrentPlayer AS TPlayer
-
-GLOBAL PlayerObjID%
-PlayerObjID = GENX_OBJ()
-CreateSphere(PlayerObjID, TerrainWidth/8, 32, RGB(0,255,0))
-
-
-
 GOSUB Init
 WHILE TRUE
 	GOSUB Update
@@ -59,6 +50,10 @@ WEND
 SUB Init:
 	SELECT GameState
 		CASE GAMESTATE_GAME
+			// init modules
+			GOSUB Init_Player
+			GOSUB Init_Trampoline
+			
 			// game stuff
 			CurrentMap.Init("map/map0.ddd", "map/map0.data")
 
@@ -108,43 +103,51 @@ SUB Render:
 			CurrentPlayer.Render()
 
 
-			X_MAKE2D
+
 			// debug
 			IF GOD_MODE
-				PRINT "PlayerX: " + CurrentPlayer.M.X+" PlayerY: "+CurrentPlayer.M.Y, 10, 10, FALSE
-				
 				LOCAL mx, my, ml, mr
 				LOCAL ox1, oy1, oz1, ox2, oy2, oz2
 				LOCAL dirx, diry, dirz
 				LOCAL posx, posy, posz
 				MOUSESTATE mx, my, ml, mr
-				
-				X_PUSHMATRIX
+
+
 				X_SCREEN2WORLD mx, my, 0, ox1, oy1, oz1
 				X_SCREEN2WORLD mx, my, 1000, ox2, oy2, oz2
-				
+
 				dirx = ox1 - ox2
 				diry = oy1 - oy2
 				dirz = oz1 - oz2
-				
+
 				LOCAL dist = X_COLLISIONRAY(CurrentMap.ObjID, 0, ox1, oy1, oz1, dirx, diry, dirz)
-				
-				// normalize vector
-				LOCAL veclen = SQR(dirx*dirx + diry*diry + dirz*dirz)
-				dirx = dirx/veclen
-				diry = diry/veclen
-				dirz = dirz/veclen
-				
-				posx = ox1 - dirx*dist
-				posy = oy1 - diry*dist
-				posz = oz1 - dirz*dist
-				
-				X_MOVEMENT 0,0,0
-				DEBUG "x: "+posx+" y: "+posy+" z: "+posz+"\n"
-				X_DOT posx, posy, posz, 32, RGB(255,255,0)
-				X_POPMATRIX
+
+				IF dist > 0
+					X_PUSHMATRIX
+					// normalize vector
+					LOCAL veclen = SQR(dirx*dirx + diry*diry + dirz*dirz)
+					dirx = dirx/veclen
+					diry = diry/veclen
+					dirz = dirz/veclen
+
+					posx = ox1 + dirx*dist
+					posy = oy1 + diry*dist
+					posz = oz1 + dirz*dist
+
+					X_MOVEMENT 0,0,0
+					X_DOT posx, posy, posz, 32, RGB(255,255,0)
+					X_POPMATRIX
+				ENDIF
+				X_MAKE2D
+
+				PRINT "PlayerX: "+CurrentPlayer.M.X+ " PlayerY: "+CurrentPlayer.M.Y, 10, 10
+				PRINT "PickX: "+posx+" PickY: "+posy+" PickZ "+posz, 10, 30
+			ELSE
+				X_MAKE2D
+
+				// ui
 			ENDIF
-			
+
 			// 2d stuff
 
 		CASE GAMESTATE_MENU

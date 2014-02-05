@@ -1,0 +1,49 @@
+// --------------------------------- //
+// Project: JumpIt3D
+// Start: Monday, December 30, 2013
+// IDE Version: 10.283
+
+GLOBAL TrampolineObjID%
+
+
+
+TYPE TTrampoline
+	M AS TMoveable
+	Bounciness
+
+	FUNCTION Update:
+		self.M.Update()
+		
+		X_MOVEMENT 0,0,0
+		self.M.SetMovement()
+		LOCAL e = X_COLLISIONSPHEREBOX(0, CurrentPlayer.M.Y, CurrentPlayer.M.X, CurrentPlayer.M.Info[PLAYER_RADIUS], 1*TerrainWidth/4,.25*TerrainWidth/4,1*TerrainWidth/4)
+		DEBUG e+"\n"
+	ENDFUNCTION
+
+	FUNCTION Render:
+		X_PUSHMATRIX
+		self.M.SetMovement()
+		X_DRAWOBJ TrampolineObjID, 0
+		X_POPMATRIX
+	ENDFUNCTION
+
+	FUNCTION Init: X, Y, Bounciness
+		LOCAL p AS CheckCollision
+		p = CheckCollision_Trampoline
+		
+		self.M.SetPosition(X, Y)
+		self.M.SetCollisionCheck(p)
+		self.Bounciness = Bounciness
+	ENDFUNCTION
+ENDTYPE
+
+
+FUNCTION CheckCollision_Trampoline: M AS TMoveable
+	RETURN X_COLLISIONAABB(CurrentMap.ColObjID, 0, 0, M.Y, M.X, 1,.25,1)
+ENDFUNCTION
+
+SUB Init_Trampoline:
+	TrampolineObjID = GENX_OBJ()
+	CreateCube(TrampolineObjID, TerrainWidth/4, RGB(0,255,0))
+	X_SCALEMODEL TrampolineObjID, 1,.25,1
+ENDSUB

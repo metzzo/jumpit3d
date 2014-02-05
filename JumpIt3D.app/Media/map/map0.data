@@ -1,4 +1,2 @@
-trampoline X Y Bounciness
-lift StartX StartY EndX EndY Speed
-
-
+trampoline 28.34 0.68 1
+trampoline 40.70 -2,71 1

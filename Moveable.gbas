@@ -7,10 +7,15 @@ CONSTANT GRAVITY = -.05
 CONSTANT FRICTIONX = .85, FRICTIONY = .95
 CONSTANT TOLERANCE = 1
 
+
+
+PROTOTYPE CheckCollision: M AS TMoveable
+
 TYPE TMoveable
 	X;Y
 	SpeedX;SpeedY
-	Radius = 0
+	Info[]
+	CheckCollisionProto AS CheckCollision
 
 
 	FUNCTION Update:
@@ -60,12 +65,13 @@ TYPE TMoveable
 		self.X = X
 		self.Y = Y
 	ENDFUNCTION
-
-	FUNCTION SetRadius: Radius
-		self.Radius = Radius
+	
+	FUNCTION SetCollisionCheck: P AS CheckCollision
+		self.CheckCollisionProto = P
 	ENDFUNCTION
 
 	FUNCTION IsCollision:
-		RETURN X_COLLISION(CurrentMap.ColObjID, 0, self.Radius, 0, self.Y, self.X)
+		X_MOVEMENT 0,0,0
+		RETURN self.CheckCollisionProto(self)
 	ENDFUNCTION
 ENDTYPE

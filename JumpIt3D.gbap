@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<GLBASIC APP_NAME="JumpIt3D" COMPANY_NAME="programming with design" CONSOLE_PRG="0" DEBUG="1" DEBUGFULL="0" EDITFILE=".\JumpIt3D.gbas" EDITLINE="139" MAXDIMDEBUG="20" PLATFORM_BOX_SELECTION="WIN32" STRICT="1" USERDEF_VERSION="000.001" VERSION="6.003" >
+<GLBASIC APP_NAME="JumpIt3D" COMPANY_NAME="programming with design" CONSOLE_PRG="0" DEBUG="1" DEBUGFULL="0" EDITFILE=".\JumpIt3D.gbas" EDITLINE="75" MAXDIMDEBUG="20" PLATFORM_BOX_SELECTION="WIN32" STRICT="1" USERDEF_VERSION="000.001" VERSION="6.003" >
    <PLATFORMS >
       <PLATFORM ACTIVE="0" FRAMERATE="60" FULLSCREEN="1" MULTISAMPLE="0" NAME="ANDROID" RESX="320" RESY="480" />
       <PLATFORM ACTIVE="0" FRAMERATE="60" FULLSCREEN="1" MULTISAMPLE="0" NAME="CAANOO" RESX="320" RESY="240" />
@@ -25,6 +25,7 @@
       <FILE PATH=".\Player.gbas" />
       <FILE PATH=".\3DPrimitives.gbas" />
       <FILE PATH=".\Utils.gbas" />
+      <FILE PATH=".\Trampoline.gbas" />
    </EDITFILES>
    <SRCFILES >
       <FILE PATH=".\JumpIt3D.gbas" />
@@ -32,6 +33,7 @@
       <FILE PATH=".\Map.gbas" />
       <FILE PATH=".\Moveable.gbas" />
       <FILE PATH=".\Player.gbas" />
+      <FILE PATH=".\Trampoline.gbas" />
       <FILE PATH=".\Utils.gbas" />
    </SRCFILES>
 </GLBASIC>
