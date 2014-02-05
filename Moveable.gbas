@@ -9,14 +9,15 @@ CONSTANT TOLERANCE = 1
 
 
 
-PROTOTYPE CheckCollision: M AS TMoveable
+PROTOTYPE CheckCollision: M AS TMoveable, ObjID%
 
 TYPE TMoveable
 	X;Y
 	SpeedX;SpeedY
 	Info[]
 	CheckCollisionProto AS CheckCollision
-
+	
+	CollideWithTrampoline% = TRUE
 
 	FUNCTION Update:
 		// schwerkraft
@@ -53,7 +54,9 @@ TYPE TMoveable
 			self.Y = OldY
 			self.SpeedY = 0
 		ENDIF
-
+		
+		// trampoline
+		MoveableTrampoline(self)
 	ENDFUNCTION
 
 	FUNCTION SetMovement:
@@ -65,13 +68,13 @@ TYPE TMoveable
 		self.X = X
 		self.Y = Y
 	ENDFUNCTION
-	
+
 	FUNCTION SetCollisionCheck: P AS CheckCollision
 		self.CheckCollisionProto = P
 	ENDFUNCTION
 
 	FUNCTION IsCollision:
 		X_MOVEMENT 0,0,0
-		RETURN self.CheckCollisionProto(self)
+		RETURN self.CheckCollisionProto(self, CurrentMap.ColObjID)
 	ENDFUNCTION
 ENDTYPE

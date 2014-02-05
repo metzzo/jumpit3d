@@ -53,11 +53,14 @@ SUB Init:
 			// init modules
 			GOSUB Init_Player
 			GOSUB Init_Trampoline
-			
+
 			// game stuff
 			CurrentMap.Init("map/map0.ddd", "map/map0.data")
 
 			CurrentPlayer.Init(0, 0)
+			
+			X_MAKE3D 1, 500, 45
+			X_MAKE2D
 		CASE GAMESTATE_MENU
 			// menu stuff
 

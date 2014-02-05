@@ -21,7 +21,7 @@ TYPE TPlayer
 			ENDIF
 			INC self.M.Y, .1
 		ENDIF
-		
+
 		CamToY = self.M.Y
 		CamToZ = self.M.X
 		CamY = (CamToY+ PLAYER_2_CAMERADIST + CamY*4)/5
@@ -44,12 +44,12 @@ TYPE TPlayer
 	FUNCTION Init: X, Y
 		self.StartX = X
 		self.StartY = Y
-		
+
 		LOCAL p AS CheckCollision
 		p = CheckCollision_Player
 
 		self.M.SetCollisionCheck(p)
-		
+
 		CONSTANT PLAYER_RADIUS = 0
 		DIMDATA self.M.Info[], TerrainWidth/8
 
@@ -62,9 +62,9 @@ TYPE TPlayer
 ENDTYPE
 
 
-FUNCTION CheckCollision_Player: M AS TMoveable
+FUNCTION CheckCollision_Player: M AS TMoveable, Obj%
 	LOCAL Radius = M.Info[PLAYER_RADIUS]
-	RETURN X_COLLISION(CurrentMap.ColObjID, 0, Radius, 0, M.Y, M.X)
+	RETURN X_COLLISION(Obj, 0, Radius, 0, M.Y, M.X)
 ENDFUNCTION
 
 
